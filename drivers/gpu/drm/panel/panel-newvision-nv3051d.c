@@ -406,9 +406,7 @@ static int panel_nv3051d_init_sequence_r36s(struct panel_nv3051d *ctx)
 	mipi_dsi_dcs_write_seq(dsi, 0x36, 0x02);
 	mipi_dsi_dcs_write_seq(dsi, 0x11, 0x00);
 	mipi_dsi_dcs_write_seq(dsi, 0x29, 0x00);
-	mipi_dsi_dcs_write_seq(dsi, 0x11);
-	mipi_dsi_dcs_write_seq(dsi, 0x29);
-
+	
 	dev_dbg(ctx->dev, "Panel init sequence done\n");
 	return 0;
 }
