@@ -364,6 +364,7 @@
 		clocks = <&cru SCLK_I2S1_OUT>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&pmic_int>, <&i2s1_2ch_mclk>;
+		system-power-controller;
 		wakeup-source;
 		#clock-cells = <1>;
 		#sound-dai-cells = <0>;
