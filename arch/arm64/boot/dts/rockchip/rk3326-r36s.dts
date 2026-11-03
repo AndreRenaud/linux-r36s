@@ -47,7 +47,8 @@
 			      <&joystick_mux 1>,
 			      <&joystick_mux 2>,
 			      <&joystick_mux 3>;
-		poll-interval = <60>;
+		/* 100 Hz: the sticks steer the view, so 60 ms steps are visible */
+		poll-interval = <10>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 
