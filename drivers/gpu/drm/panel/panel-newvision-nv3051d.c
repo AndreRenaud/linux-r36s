@@ -23,12 +23,15 @@
 #include <drm/drm_modes.h>
 #include <drm/drm_panel.h>
 
+struct panel_nv3051d;
+
 struct nv3051d_panel_info {
 	const struct drm_display_mode *display_modes;
 	unsigned int num_modes;
 	u16 width_mm, height_mm;
 	u32 bus_flags;
 	u32 mode_flags;
+	int (*init_sequence)(struct panel_nv3051d *ctx);
 };
 
 struct panel_nv3051d {
@@ -289,10 +292,13 @@ static int panel_nv3051d_prepare(struct drm_panel *panel)
 	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
 	msleep(20);
 
-	ret = panel_nv3051d_init_sequence(ctx);
-	if (ret < 0) {
-		dev_err(ctx->dev, "Panel init sequence failed: %d\n", ret);
-		goto disable_vdd;
+	if (ctx->panel_info->init_sequence) {
+		ret = ctx->panel_info->init_sequence(ctx);
+		if (ret < 0) {
+			dev_err(ctx->dev, "Panel init sequence failed: %d\n",
+				ret);
+			goto disable_vdd;
+		}
 	}
 
 	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
@@ -495,6 +501,7 @@ static const struct nv3051d_panel_info nv3051d_rg351v_info = {
 	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
 		      MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET |
 		      MIPI_DSI_CLOCK_NON_CONTINUOUS,
+	.init_sequence = panel_nv3051d_init_sequence,
 };
 
 static const struct nv3051d_panel_info nv3051d_rg353p_info = {
@@ -505,6 +512,7 @@ static const struct nv3051d_panel_info nv3051d_rg353p_info = {
 	.bus_flags = DRM_BUS_FLAG_DE_LOW | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
 	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
 		      MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET,
+	.init_sequence = panel_nv3051d_init_sequence,
 };
 
 static const struct nv3051d_panel_info nv3051d_rk2023_info = {
@@ -515,6 +523,7 @@ static const struct nv3051d_panel_info nv3051d_rk2023_info = {
 	.bus_flags = DRM_BUS_FLAG_DE_LOW | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
 	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
 		      MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET,
+	.init_sequence = panel_nv3051d_init_sequence,
 };
 
 static const struct of_device_id newvision_nv3051d_of_match[] = {
