@@ -602,12 +602,13 @@
 	status = "okay";
 };
 
+/* No SPI flash is fitted (its JEDEC ID reads back as all ff) */
 &sfc {
 	pinctrl-0 = <&sfc_clk &sfc_cs0 &sfc_bus2>;
 	pinctrl-names = "default";
 	#address-cells = <1>;
 	#size-cells = <0>;
-	status = "okay";
+	status = "disabled";
 
 	flash@0 {
 		compatible = "jedec,spi-nor";
@@ -657,6 +658,15 @@
 
 &vopb_mmu {
 	status = "okay";
+};
+
+/* No video decoding/encoding: the kernel config leaves the Hantro driver out */
+&vpu {
+	status = "disabled";
+};
+
+&vpu_mmu {
+	status = "disabled";
 };
 
 &pinctrl {
