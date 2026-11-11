@@ -105,6 +105,19 @@
 					<3574170 0>;
 	};
 
+	/*
+	 * A separate charger charges the battery from the DC input; the
+	 * RK817 only measures the battery. GPIO0_B3 is high while the DC
+	 * input is connected.
+	 */
+	dc_charger: dc-charger {
+		compatible = "gpio-charger";
+		charger-type = "mains";
+		gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&dc_det>;
+	};
+
 	backlight: backlight {
 		compatible = "pwm-backlight";
 		/*

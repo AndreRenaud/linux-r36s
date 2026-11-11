@@ -451,7 +451,16 @@ static int rk817_bat_get_prop(struct power_supply *ps,
 		}
 		switch (charger->charge_status) {
 		case CHRG_OFF:
-			val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
+			/*
+			 * Some boards charge the battery with a separate
+			 * charger and use the RK817 only as a fuel gauge, so
+			 * its own charger stays off. Current flowing into the
+			 * battery then tells that it charges.
+			 */
+			if (charger->cur_avg_ua > 0)
+				val->intval = POWER_SUPPLY_STATUS_CHARGING;
+			else
+				val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
 			break;
 		/*
 		 * Dead charge is documented, but not explained. I never
