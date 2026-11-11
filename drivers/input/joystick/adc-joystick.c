@@ -45,7 +45,7 @@ static void adc_joystick_poll(struct input_dev *input)
 		if (ret < 0)
 			return;
 		if (joy->axes[i].inverted)
-			val = adc_joystick_invert(input, i, val);
+			val = adc_joystick_invert(input, joy->axes[i].code, val);
 		input_report_abs(input, joy->axes[i].code, val);
 	}
 	input_sync(input);
@@ -95,7 +95,7 @@ static int adc_joystick_handle(const void *data, void *private)
 		else
 			val &= GENMASK(msb, 0);
 		if (joy->axes[i].inverted)
-			val = adc_joystick_invert(joy->input, i, val);
+			val = adc_joystick_invert(joy->input, joy->axes[i].code, val);
 		input_report_abs(joy->input, joy->axes[i].code, val);
 	}
 
