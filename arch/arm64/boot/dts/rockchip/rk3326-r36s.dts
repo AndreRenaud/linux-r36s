@@ -16,6 +16,7 @@
 
 	aliases {
 		mmc0 = &sdmmc;
+		mmc1 = &sdio;
 	};
 
 	chosen {
@@ -600,6 +601,23 @@
 	sd-uhs-sdr104;
 	vmmc-supply = <&vcc_sd>;
 	vqmmc-supply = <&vccio_sd>;
+	status = "okay";
+};
+
+/*
+ * Second microSD slot ("TF2", for the user's files). It shares the card
+ * supply with the boot slot. The I/O voltage is left at 3.3 V (no UHS modes):
+ * vccio_sd is the boot card's signalling supply, so it can't be switched for
+ * this card.
+ */
+&sdio {
+	cap-sd-highspeed;
+	card-detect-delay = <200>;
+	cd-gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_LOW>;
+	disable-wp;
+	no-mmc;
+	no-sdio;
+	vmmc-supply = <&vcc_sd>;
 	status = "okay";
 };
 
